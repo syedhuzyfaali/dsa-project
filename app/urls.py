@@ -24,6 +24,8 @@ admin_urls = [
     path('admin/dashboard', Admin.dashboard, name='admin_dashboard'),
     path('admin/profile', Admin.profile, name='admin_profile'),
     path('admin/courses', Admin.courses, name='admin_courses'),
+    path('admin/add_student', Admin.add_student, name='admin_add_student'),
+    path('admin/add_teacher', Admin.add_teacher, name='admin_add_teacher'),
 ]
 
 urlpatterns += student_urls
