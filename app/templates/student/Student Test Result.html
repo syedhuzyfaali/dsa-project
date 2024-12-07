@@ -1,0 +1,54 @@
+{% extends "student/base.html" %}
+
+{% block content %}
+<!-- Student Assessment Marks Page -->
+<div class="min-h-screen bg-slate-100 p-6">
+    <div class="container mx-auto max-w-4xl bg-white p-8 px-16 rounded shadow">
+      <h2 class="text-3xl font-semibold text-center text-slate-800 mb-6">Assessment Result</h2>
+      
+      <div class="mb-4 px-16">
+        <select id="teacher" name="teacher"
+            class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-slate-600"
+            required>
+            <option value="" disabled selected>Select Course</option>
+            {% for teacher in teachers %}
+            <option value="{{ teacher.id }}">{{ teacher.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table class="min-w-full table-auto bg-white border border-slate-200 rounded">
+          <thead>
+            <tr class="bg-slate-800 text-white">
+              <th class="px-4 py-2 text-left">Assessment</th>
+              <th class="px-4 py-2 text-right">Max Marks</th>
+              <th class="px-4 py-2 text-right">Marks Obtained</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Example row -->
+            <tr class="border-t border-slate-200">
+              <td class="px-4 py-2 text-slate-700">Midterm Exam</td>
+              <td class="px-4 py-2 text-right text-slate-700">50</td>
+              <td class="px-4 py-2 text-right text-slate-700">45</td>
+            </tr>
+            <tr class="border-t border-slate-200">
+              <td class="px-4 py-2 text-slate-700">Final Exam</td>
+              <td class="px-4 py-2 text-right text-slate-700">100</td>
+              <td class="px-4 py-2 text-right text-slate-700">80</td>
+            </tr>
+            <tr class="border-t border-slate-200">
+              <td class="px-4 py-2 text-slate-700">Assignment 1</td>
+              <td class="px-4 py-2 text-right text-slate-700">20</td>
+              <td class="px-4 py-2 text-right text-slate-700">18</td>
+            </tr>
+            <!-- Add more rows dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+
+{% endblock %}
