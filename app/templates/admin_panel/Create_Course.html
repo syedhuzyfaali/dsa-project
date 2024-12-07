@@ -1,0 +1,63 @@
+{% extends "admin_panel/base.html" %}
+
+{% block content %}
+
+<!-- Admin Panel: Create Course ID -->
+<div class="min-h-screen bg-slate-100 p-8">
+  <div class="container mx-auto max-w-3xl bg-white shadow-lg rounded-lg p-6">
+    <!-- Header -->
+    <div class="mb-6">
+      <h1 class="text-2xl font-semibold text-slate-800">Create Course</h1>
+      <p class="text-slate-500">Use this form to add a new course for the.</p>
+    </div>
+
+    <!-- Form -->
+    <form action="#" method="POST" class="space-y-6">
+      <!-- Course Name -->
+      <div>
+        <label class="block text-slate-700 font-medium mb-2" for="course-name">Course Name</label>
+        <input 
+          type="text" 
+          id="course-name" 
+          name="course-name" 
+          placeholder="e.g., Data Structures" 
+          class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-slate-600"
+          required
+        />
+      </div>
+      <div>
+        <label class="block text-slate-700 font-medium mb-2" for="course-name">Course Detail</label>
+        <input 
+          type="text" 
+          id="course-name" 
+          name="course-name" 
+          placeholder="" 
+          class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-slate-600"
+          required
+        />
+      </div>
+      <div>
+        <label class="block text-slate-700 font-medium mb-2" for="course-name">Course Credit Hr</label>
+        <input 
+          type="number" 
+          id="course-name" 
+          name="course-name" 
+          placeholder="" 
+          class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-slate-600"
+          required
+        />
+      </div>
+     
+      <!-- Submit Button -->
+      <div class="flex justify-end">
+        <button 
+          type="submit" 
+          class="bg-slate-800 text-white px-6 py-2 rounded hover:bg-slate-700"
+        >
+          Create Course
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
