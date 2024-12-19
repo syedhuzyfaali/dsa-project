@@ -10,6 +10,14 @@
 <body>
     {% include "admin_panel/components/Navbar.html" %}
 
+    {% if messages %}
+<div>
+    {% for message in messages %}
+        <div class="alert">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
     <!-- Main Content -->
     <main>
         {% block content %}{% endblock %}
