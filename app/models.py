@@ -68,3 +68,14 @@ class Enrollment(models.Model):
 
     def __str__(self):
         return f"{self.student.full_name} enrolled in {self.course_class.course.name}"
+
+
+class GradeStudent(models.Model):
+    class_enrolled = models.ForeignKey(Class, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    test_name = models.CharField(max_length=255)
+    max_marks = models.IntegerField()
+    marks_obtained = models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.student.name} - {self.test_name}"

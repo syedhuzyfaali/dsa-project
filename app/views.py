@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import Admin,Student,Instructor,Semester,Course,Class,Enrollment
+from .models import Admin,Student,Instructor,Semester,Course,Class,Enrollment,GradeStudent
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
+from django.http import HttpResponse
 
 # Create your views here.
 def hero(request):
@@ -77,8 +78,79 @@ class StudentView:
         return render(request, 'student/Student Test Result.html')
     
     def view_grade_history(request):
-        return render(request, 'student/Student Grade History.html')
-    
+        user_id = request.session.get('user_id')
+
+        if not user_id:
+            return redirect('login')
+
+        # Get the student object
+        student = Student.objects.get(id=user_id)
+
+        # Get all the enrollments for the student
+        enrollments = Enrollment.objects.filter(student=student)
+
+        grade_history = []
+        total_obtained_marks = 0
+        total_classes = 0
+        current_semester = None
+
+        for enrollment in enrollments:
+            course_class = enrollment.course_class
+            course = course_class.course
+
+            # Get all grades for the student in this class
+            grades = GradeStudent.objects.filter(student=student, class_enrolled=course_class)
+
+            # Calculate the obtained percentage
+            total_marks = sum(grade.max_marks for grade in grades)
+            obtained_marks = sum(grade.marks_obtained for grade in grades if grade.marks_obtained is not None)
+
+            if total_marks > 0:
+                obtained_percentage = (obtained_marks / total_marks) * 100
+            else:
+                obtained_percentage = 0  # If no marks are available
+
+            # Update the overall obtained marks and classes count
+            total_obtained_marks += obtained_marks
+            total_classes += 1
+
+            # Determine the grade based on the obtained percentage
+            if obtained_percentage >= 87:
+                grade = 'A'
+            elif obtained_percentage >= 78:
+                grade = 'B'
+            elif obtained_percentage >= 65:
+                grade = 'C'
+            else:
+                grade = 'F'
+
+            # Prepare the data for the table row
+            grade_history.append({
+                'class_id': course_class.id,
+                'course_name': course.name,
+                'obtained_percentage': obtained_percentage,
+                'max_percentage': total_marks,
+                'grade': grade,
+                'semester': f"{course_class.semester.type} {course_class.semester.year}",
+            })
+
+            # Track the current semester (latest semester)
+            if not current_semester or course_class.semester.year > current_semester.year:
+                current_semester = course_class.semester
+
+        # Calculate the overall percentage
+        if total_classes > 0:
+            overall_percentage = (total_obtained_marks / (total_classes))*10
+        else:
+            overall_percentage = 0  # If no classes
+
+        # Pass the data to the template
+        return render(request, 'student/Student Grade History.html', {
+            'grade_history': grade_history,
+            'overall_percentage': overall_percentage,
+            'current_semester': current_semester,
+        })
+
     def view_class_schedule(request):
         user_id = request.session.get('user_id')
         
@@ -149,6 +221,51 @@ class StudentView:
             }
         })
 
+    def testResultDashboard(request):
+    # Check if the logged-in user is a student
+        if request.session.get('user_type') != 'student':
+            return HttpResponse("Unauthorized access. Please log in as a student.")
+
+        # Get the logged-in student's ID from session
+        student_id = request.session.get('user_id')
+        
+        if not student_id:
+            return HttpResponse("Student ID not found in session.")
+
+        # Get the student's enrollment records
+        enrollments = Enrollment.objects.filter(student_id=student_id)
+
+        # Prepare a list of class IDs and course names to send to the template
+        class_info = []
+        for enrollment in enrollments:
+            class_info.append({
+                'class_id': enrollment.course_class.id,
+                'course_name': enrollment.course_class.course.name
+            })
+
+        return render(request, 'student/testResultsDashboard.html', {'class_info': class_info})
+    
+    def view_test_results_for_class(request, class_id):
+        # Ensure that the user is logged in
+        student_id = request.session.get('user_id')
+        if not student_id:
+            return redirect('login')
+
+        # Get the student's object
+        student = Student.objects.get(id=student_id)
+
+        # Get the class object
+        course_class = Class.objects.get(id=class_id)
+
+        # Get the grades for the student in this class
+        test_results = GradeStudent.objects.filter(student=student, class_enrolled=course_class)
+
+        # Pass the test results to the template
+        return render(request, 'student/Student Test Result.html', {
+            'test_results': test_results,
+            'class_info': course_class,
+            'student_name': student.full_name,
+        })
 
 class AdminView:
     def dashboard(request):
@@ -400,5 +517,73 @@ class TeacherView:
         # Pass instructor information to the template
         return render(request, 'teacher/teacher_class_schedule.html', {'schedule': schedule, 'instructor': instructor})
     
-    def courses(request):
-        return render(request, 'Courses.html')
+    def ClassesDashboard(request):
+        user_id = request.session.get('user_id')
+
+        # Ensure that the user is logged in
+        if not user_id:
+            return redirect('login')
+
+        try:
+            # Get the instructor object based on the user_id stored in the session
+            instructor = Instructor.objects.get(id=user_id)
+
+            # Get all classes taught by this instructor
+            classes = Class.objects.filter(instructor=instructor)
+
+        except Instructor.DoesNotExist:
+            messages.error(request, "Instructor not found.")
+            return redirect('login')
+
+        # Pass the instructor and the classes to the template
+        return render(request, 'teacher/ClassesDashboard.html', {'instructor': instructor, 'classes': classes})
+    
+    def grade_students(request, class_id, instructor_id):
+        user_id = request.session.get('user_id')
+
+        if not user_id:
+            return redirect('login')
+
+        try:
+            # Get the instructor and class instances
+            instructor = Instructor.objects.get(id=instructor_id)
+            class_instance = get_object_or_404(Class, id=class_id)
+
+            # Ensure the instructor is teaching this class
+            if class_instance.instructor != instructor:
+                messages.error(request, "You do not have permission to grade this class.")
+                return redirect('teacher_classes')
+
+            # Fetch students enrolled in this class
+            students = Student.objects.filter(enrollment__course_class=class_instance)
+
+        except Instructor.DoesNotExist:
+            messages.error(request, "Instructor not found.")
+            return redirect('login')
+
+        if request.method == 'POST':
+            test_name = request.POST.get('test_name')
+            max_marks = int(request.POST.get('max_marks'))
+
+            # Save marks for each student
+            for student in students:
+                marks_obtained = request.POST.get(f'marks_{student.id}')
+                if marks_obtained:
+                    GradeStudent.objects.create(
+                        class_enrolled=class_instance,
+                        student=student,
+                        test_name=test_name,
+                        max_marks=max_marks,
+                        marks_obtained=marks_obtained
+                    )
+
+            messages.success(request, "Marks have been saved successfully.")
+            return redirect('teacher_classes')
+
+        return render(request, 'teacher/GradeStudents.html', {
+            'class_instance': class_instance,
+            'students': students,
+            'instructor': instructor
+        })
+
+

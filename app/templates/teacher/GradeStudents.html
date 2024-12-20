@@ -1,0 +1,46 @@
+{% extends "teacher/base.html" %}
+
+{% block title %}Grade Students{% endblock %}
+
+{% block content %}
+<div class="bg-slate-100 min-h-screen p-6">
+  <div class="container mx-auto max-w-lg">
+    <h1 class="text-5xl font-light text-center text-slate-800 my-5">Grade Students for Class: {{ class_instance.course.name }}</h1>
+    
+    <form action="{% url 'teacher_grade_students' class_id=class_instance.id instructor_id=instructor.id %}" method="POST" class="bg-white p-6 rounded shadow">
+      {% csrf_token %}
+      <div class="my-5">
+        <label for="test_name" class="block text-lg font-semibold text-slate-800">Test Name</label>
+        <input type="text" name="test_name" class="w-full p-3 border border-gray-300 rounded" required>
+      </div>
+      <div class="my-5">
+        <label for="max_marks" class="block text-lg font-semibold text-slate-800">Max Marks</label>
+        <input type="number" name="max_marks" class="w-full p-3 border border-gray-300 rounded" required>
+      </div>
+
+      <table class="min-w-full table-auto">
+        <thead>
+          <tr>
+            <th class="px-4 py-2 text-left">Student ID</th>
+            <th class="px-4 py-2 text-left">Student Name</th>
+            <th class="px-4 py-2 text-left">Marks Obtained</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for student in students %}
+            <tr>
+              <td class="px-4 py-2">{{ student.id }}</td> <!-- Student ID -->
+              <td class="px-4 py-2">{{ student.full_name }}</td> <!-- Student Name -->
+              <td class="px-4 py-2">
+                <input type="number" name="marks_{{ student.id }}" class="w-full p-3 border border-gray-300 rounded">
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <button type="submit" class="w-full bg-slate-800 text-white px-4 py-2 rounded hover:bg-slate-700 mt-5">Save Marks</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

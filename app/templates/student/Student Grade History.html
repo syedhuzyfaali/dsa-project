@@ -7,18 +7,15 @@
     <h2 class="text-3xl font-semibold text-center text-slate-800 mb-6">Grade History</h2>
 
     <!-- GPA and CGPA Section -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
       <div class="bg-slate-800 text-white p-4 rounded shadow">
-        <h3 class="text-xl font-semibold">GPA</h3>
-        <p class="text-4xl font-bold mt-2">3.8</p>
+        <h3 class="text-xl font-semibold">Overall %</h3>
+        <p class="text-4xl font-bold mt-2">{{ overall_percentage|floatformat:2 }}%</p>
       </div>
+
       <div class="bg-slate-800 text-white p-4 rounded shadow">
-        <h3 class="text-xl font-semibold">CGPA</h3>
-        <p class="text-4xl font-bold mt-2">3.7</p>
-      </div>
-      <div class="bg-slate-800 text-white p-4 rounded shadow">
-        <h3 class="text-xl font-semibold">Current Course</h3>
-        <p class="text-4xl font-bold mt-2">Fall 2024</p>
+        <h3 class="text-xl font-semibold">Current Semester</h3>
+        <p class="text-4xl font-bold mt-2">{{ current_semester.type }} {{ current_semester.year }}</p>
       </div>
     </div>
 
@@ -27,85 +24,32 @@
       <table class="min-w-full table-auto bg-white border border-collapse border-slate-700 rounded">
         <thead>
           <tr class="bg-slate-800 text-white">
+            <th class="px-4 py-2 border border-slate-100 text-left">Class ID</th>
             <th class="px-4 py-2 border border-slate-100 text-left">Course Name</th>
-            <th class="px-4 py-2 border border-slate-100 ">Marks Obtained</th>
-            <th class="px-4 py-2 border border-slate-100 ">Total Marks</th>
-            <th class="px-4 py-2 border border-slate-100 ">Grade</th>
-            <th class="px-4 py-2 border border-slate-100 ">Semester</th>
-
-
+            <th class="px-4 py-2 border border-slate-100">Obt. %</th>
+            <th class="px-4 py-2 border border-slate-100">Max %</th>
+            <th class="px-4 py-2 border border-slate-100">Grade</th>
+            <th class="px-4 py-2 border border-slate-100">Semester</th>
           </tr>
         </thead>
         <tbody>
-          <!-- Example row -->
+          {% for record in grade_history %}
           <tr class="border-t border-slate-700">
-            <td class="px-4 py-2 border border-slate-700 text-slate-700">Programming Fundamentals</td>
-            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700 ">87</td>
-            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">100</td>
-            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">A</td>
-            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">Fall 2023</td>
+            <td class="px-4 py-2 border border-slate-700 text-slate-700">{{ record.class_id }}</td>
+            <td class="px-4 py-2 border border-slate-700 text-slate-700">{{ record.course_name }}</td>
+            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">{{ record.obtained_percentage|floatformat:2 }}%</td>
+            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">100%</td>
+            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">{{ record.grade }}</td>
+            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">{{ record.semester }}</td>
           </tr>
-          <tr class="border-t border-slate-700">
-            <td class="px-4 py-2 border border-slate-700 text-slate-700">Application of Information & Communication Technologies Lab</td>
-            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700 ">87</td>
-            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">100</td>
-            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">A</td>
-            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">Fall 2023</td>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="px-4 py-2 text-center text-slate-700">No grade history found.</td>
           </tr>
-          <tr class="border-t border-slate-700">
-            <td class="px-4 py-2 border border-slate-700 text-slate-700">Programming Fundamentals</td>
-            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700 ">87</td>
-            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">100</td>
-            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">A</td>
-            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">Fall 2023</td>
-          </tr>
-          
-        
-          
-          <!-- Add more rows dynamically -->
-        </tbody>
-      </table>
-    </div>
-    
-    
-    
-    <!-- Semester GPA History Table -->
-    <div class="overflow-x-auto">
-      <table class="min-w-full table-auto bg-white border border-collapse border-slate-700 rounded">
-        <thead>
-          <tr class="bg-slate-800 text-white">
-            <th class="px-4 py-2 border border-slate-100 text-left">Semester</th>
-            <th class="px-4 py-2 border border-slate-100 ">GPA</th>
-            <th class="px-4 py-2 border border-slate-100 ">CGPA</th>
-
-
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Example row -->
-          <tr class="border-t border-slate-700">
-            <td class="px-4 py-2 border border-slate-700 text-slate-700">Programming Fundamentals</td>
-            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700 ">87</td>
-            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">100</td>
-          </tr>
-          <tr class="border-t border-slate-700">
-            <td class="px-4 py-2 border border-slate-700 text-slate-700">Programming Fundamentals</td>
-            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700 ">87</td>
-            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">100</td>
-          </tr>
-          <tr class="border-t border-slate-700">
-            <td class="px-4 py-2 border border-slate-700 text-slate-700">Programming Fundamentals</td>
-            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700 ">87</td>
-            <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">100</td>
-          </tr>
-          
-        
-          
-          <!-- Add more rows dynamically -->
+          {% endfor %}
         </tbody>
       </table>
     </div>
   </div>
 </div>
-
 {% endblock %}

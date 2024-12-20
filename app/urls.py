@@ -17,13 +17,18 @@ student_urls = [
     path('student/view_class_schedule', StudentView.view_class_schedule, name='student_view_class_schedule'),
     path('student/view_grade_history', StudentView.view_grade_history, name='student_view_grade_history'),
     path('student/view_Fee_bill', StudentView.view_fee_bill, name='student_view_Fee_bill'),
+    path('student/test_Dashbaord', StudentView.testResultDashboard, name='testDashbaord'),
+    path('student/view_test_results/<int:class_id>/', StudentView.view_test_results_for_class, name='student_view_test_results_for_class'),
+
 ]
 
 teacher_urls = [
     path('teacher/dashboard', TeacherView.dashboard, name='teacher_dashboard'),
     path('teacher/profile/<int:instructor_id>', TeacherView.profile_view, name='teacher_profile'),
-    path('teacher/courses', TeacherView.courses, name='teacher_courses'),
+    path('teacher/classes_dashboard', TeacherView.ClassesDashboard, name='teacher_classes'),
     path('teacher/class_schedule', TeacherView.teacher_class_schedule, name='teacher_class_schedule'),
+    path('teacher/grade_students/<int:class_id>/<int:instructor_id>', TeacherView.grade_students, name='teacher_grade_students')
+
 ]
 
 admin_urls = [

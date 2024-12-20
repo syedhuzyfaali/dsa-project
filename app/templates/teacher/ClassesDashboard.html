@@ -1,0 +1,23 @@
+{% extends "teacher/base.html" %}
+
+{% block title %}LMS | Welcome!{% endblock %}
+
+{% block content %}
+<!-- Dashboard Page -->
+<div class="bg-slate-100 min-h-screen p-6">
+  <div class="container mx-auto">
+    <h1 class="text-5xl font-light text-center text-slate-800 my-5">Welcome! {{ request.session.user_name|default:"User" }}</h1>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+      {% for class in classes %}
+        <a href="{% url 'teacher_grade_students' class_id=class.id instructor_id=instructor.id %}" class="bg-amber-200 p-6 py-20 rounded shadow hover:bg-amber-400 hover:scale-105 transition">
+          <h2 class="text-xl font-semibold text-slate-800">Class ID - {{ class.id }}</h2>
+          <p class="text-slate-600">{{ class.course.name }}</p>  
+        </a>
+      {% empty %}
+        <p class="text-center text-xl text-slate-600">No classes found for this teacher.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
