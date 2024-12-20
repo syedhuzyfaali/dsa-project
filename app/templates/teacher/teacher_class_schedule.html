@@ -1,4 +1,4 @@
-{% extends "student/base.html" %}
+{% extends "teacher/base.html" %}
 
 {% block content %}
 <!-- Student Class Schedule Page -->
@@ -14,7 +14,6 @@
             <tr class="bg-slate-800 text-white">
               <th class="px-4 py-2 border border-slate-100 text-left">Class ID</th>
               <th class="px-4 py-2 border border-slate-100">Course Name</th>
-              <th class="px-4 py-2 border border-slate-100">Teacher</th>
               <th class="px-4 py-2 border border-slate-100">Time Slot</th>
               <th class="px-4 py-2 border border-slate-100">Day</th>
               <th class="px-4 py-2 border border-slate-100">Semester</th>
@@ -22,19 +21,19 @@
           </thead>
           <tbody>
             {% for class_info in schedule %}
-            <tr class="border-t border-slate-700">
-              <td class="px-4 py-2 border border-slate-700 text-slate-700">{{ class_info.class_id }}</td>
-              <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">{{ class_info.course_name }}</td>
-              <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">{{ class_info.teacher }}</td>
-              <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">{{ class_info.time_slot }}</td>
-              <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">{{ class_info.day }}</td>
-              <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">{{ class_info.semester }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-              <td colspan="6" class="text-center px-4 py-2 text-slate-700">No classes enrolled yet.</td>
-            </tr>
-            {% endfor %}
+<tr class="border-t border-slate-700">
+  <td class="px-4 py-2 border border-slate-700 text-slate-700">{{ class_info.class_id }}</td>
+  <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">{{ class_info.course_name }}</td>
+  <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">{{ class_info.time_slot }}</td>
+  <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">{{ class_info.day }}</td>
+  <td class="px-4 py-2 border border-slate-700 text-center text-slate-700">{{ class_info.semester }}</td>
+</tr>
+{% empty %}
+<tr>
+  <td colspan="5" class="text-center px-4 py-2 text-slate-700">No classes scheduled yet.</td>
+</tr>
+{% endfor %}
+
           </tbody>
         </table>
       </div>

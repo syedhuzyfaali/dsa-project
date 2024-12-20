@@ -60,3 +60,11 @@ class Class(models.Model):
 
     def __str__(self):
         return f"{self.course.name} - {self.semester.type} {self.semester.year} - {self.instructor.name}"
+    
+class Enrollment(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    course_class = models.ForeignKey(Class, on_delete=models.CASCADE)
+    enrollment_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.student.full_name} enrolled in {self.course_class.course.name}"

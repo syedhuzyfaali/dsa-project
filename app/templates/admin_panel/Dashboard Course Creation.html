@@ -4,7 +4,7 @@
 <!-- Dashboard / Course Creation Page -->
 <div class="bg-slate-100 min-h-screen p-6">
     <div class="container mx-auto">
-      <h1 class="text-5xl font-light text-center text-slate-800 my-5">Welcome! User</h1>
+      <h1 class="text-5xl font-light text-center text-slate-800 my-5">Welcome! {{ request.session.user_name|default:"User" }}</h1>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
         <a href="/admin/create_course" class="bg-orange-300 p-6 py-20 rounded shadow hover:bg-orange-400  hover:scale-105 transition">
           <h2 class="text-xl font-semibold text-slate-800">Create Course</h2>

@@ -22,6 +22,7 @@ teacher_urls = [
     path('teacher/dashboard', TeacherView.dashboard, name='teacher_dashboard'),
     path('teacher/profile/<int:instructor_id>', TeacherView.profile_view, name='teacher_profile'),
     path('teacher/courses', TeacherView.courses, name='teacher_courses'),
+    path('teacher/class_schedule', TeacherView.teacher_class_schedule, name='teacher_class_schedule'),
 ]
 
 admin_urls = [
@@ -36,6 +37,7 @@ admin_urls = [
     path('admin/create_course', AdminView.create_course, name='admin_create_course'),
     path('admin/create_class', AdminView.create_class, name='admin_create_class'),
     path('admin/create_semester', AdminView.create_semester, name='admin_create_semester'),
+    path('admin/create_course_enrollment', AdminView.create_course_enrollment, name='admin_create_course_enrollment'),
 ]
 
 

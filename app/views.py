@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import Admin,Student,Instructor,Semester,Course,Class
+from .models import Admin,Student,Instructor,Semester,Course,Class,Enrollment
 from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
 
 # Create your views here.
 def hero(request):
@@ -79,9 +80,33 @@ class StudentView:
         return render(request, 'student/Student Grade History.html')
     
     def view_class_schedule(request):
-        return render(request, 'student/Student Class Schedule.html')
+        user_id = request.session.get('user_id')
+        
+        # Ensure that the user is logged in
+        if not user_id:
+            return redirect('login')
+        
+        # Get the student object
+        student = Student.objects.get(id=user_id)
 
-# Rename Admin to AdminView
+        # Get the courses that the student is enrolled in
+        enrollments = Enrollment.objects.filter(student=student)
+        
+        # Prepare a list to pass to the template
+        schedule = []
+        for enrollment in enrollments:
+            course_class = enrollment.course_class
+            schedule.append({
+                'class_id': course_class.id,
+                'course_name': course_class.course.name,
+                'teacher': course_class.instructor.name,
+                'time_slot': course_class.time_slot,
+                'day': course_class.day_of_week,
+                'semester': f"{course_class.semester.type} - {course_class.semester.year}",
+            })
+        
+        return render(request, 'student/Student Class Schedule.html', {'schedule': schedule})
+
 class AdminView:
     def dashboard(request):
         return render(request, 'admin_panel/Dashboard.html')
@@ -209,7 +234,29 @@ class AdminView:
         return render(request, 'admin_panel/Create_Course.html')
 
     def create_course_enrollment(request):
-        return render(request, 'admin_panel/Create_Course_Enrollment.html')
+        if request.method == 'POST':
+            student_id = request.POST.get('StudentId')
+            class_id = request.POST.get('class_id')
+
+            course_class = get_object_or_404(Class, id=class_id)
+
+            try:
+                student = Student.objects.get(id=student_id)
+            except Student.DoesNotExist:
+                messages.error(request, f'Student with ID {student_id} does not exist.')
+                return redirect('admin_dashboard') 
+            existing_enrollment = Enrollment.objects.filter(student=student, course_class=course_class).exists()
+
+            if existing_enrollment:
+                messages.error(request, f'{student.full_name} is already enrolled in {course_class.course.name}.')
+            else:
+                Enrollment.objects.create(student=student, course_class=course_class)
+                messages.success(request, f'Student {student.full_name} has been enrolled in {course_class.course.name}.')
+
+            return redirect('admin_dashboard')  
+
+        classes = Class.objects.all()
+        return render(request, 'admin_panel/Create_Course_Enrollment.html', {'classes': classes})
 
     def create_class(request):
         if request.method == "POST":
@@ -283,5 +330,32 @@ class TeacherView:
 
         return render(request, 'teacher/Profile.html', {'instructor': instructor, 'expertise_str': expertise_str})
 
+    def teacher_class_schedule(request):
+        user_id = request.session.get('user_id')
+        
+        # Ensure that the user is logged in
+        if not user_id:
+            return redirect('login')
+        
+        # Get the instructor object
+        instructor = Instructor.objects.get(id=user_id)
+        
+        # Get the classes that the instructor is teaching
+        classes = Class.objects.filter(instructor=instructor)
+        
+        # Prepare a list to pass to the template
+        schedule = []
+        for course_class in classes:
+            schedule.append({
+                'class_id': course_class.id,
+                'course_name': course_class.course.name,
+                'time_slot': course_class.time_slot,
+                'day': course_class.day_of_week,
+                'semester': f"{course_class.semester.type} - {course_class.semester.year}",
+            })
+        
+        # Pass instructor information to the template
+        return render(request, 'teacher/teacher_class_schedule.html', {'schedule': schedule, 'instructor': instructor})
+    
     def courses(request):
         return render(request, 'Courses.html')
