@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import Admin,Student,Instructor
+from .models import Admin,Student,Instructor,Semester,Course,Class
 from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
@@ -185,15 +185,85 @@ class AdminView:
         return render(request, 'admin_panel/Dashboard Course Creation.html')
     
     def create_course(request):
+        if request.method == 'POST':
+            course_name = request.POST.get('course_name')
+            course_detail = request.POST.get('course_detail')
+            course_credit_hr = request.POST.get('course_credit_hr')
+
+            if not all([course_name, course_detail, course_credit_hr]):
+                messages.error(request, 'All fields are required.')
+                return redirect('create_course')
+
+            try:
+                Course.objects.create(
+                    name=course_name,
+                    detail=course_detail,
+                    credit_hr=int(course_credit_hr)
+                )
+                messages.success(request, 'Course created successfully!')
+                return redirect('admin_dashboard')
+            except Exception as e:
+                messages.error(request, f"An error occurred: {str(e)}")
+                return redirect('create_course')
+
         return render(request, 'admin_panel/Create_Course.html')
-    
+
     def create_course_enrollment(request):
         return render(request, 'admin_panel/Create_Course_Enrollment.html')
 
     def create_class(request):
-        return render(request, 'admin_panel/Create_Class.html')
+        if request.method == "POST":
+            course_id = request.POST.get('course')
+            teacher_id = request.POST.get('teacher')
+            semester_id = request.POST.get('semester')
+            room_name = request.POST.get('room')
+            day_of_week = request.POST.get('day')
+            time_slot = request.POST.get('time_slot')
+
+            course = Course.objects.get(id=course_id)
+            instructor = Instructor.objects.get(id=teacher_id)
+            semester = Semester.objects.get(id=semester_id)
+
+            Class.objects.create(
+                course=course,
+                instructor=instructor,
+                semester=semester,
+                room_name=room_name,
+                day_of_week=day_of_week,
+                time_slot=time_slot
+            )
+            messages.success(request, "Class created successfully!")
+            return redirect('admin_dashboard')
+
+        courses = Course.objects.all()
+        instructors = Instructor.objects.all()
+        semesters = Semester.objects.all()
+        return render(request, 'admin_panel/create_class.html', {
+            'courses': courses,
+            'teachers': instructors,
+            'semesters': semesters
+        })
 
     def create_semester(request):
+        if request.method == 'POST':
+            semester_type = request.POST.get('type')
+            year = request.POST.get('year')
+            fees_per_credit_hour = request.POST.get('fees')
+
+            # Validation for inputs
+            if not semester_type or not year or not fees_per_credit_hour:
+                messages.error(request, 'All fields are required.')
+                return redirect('create_semester')
+
+            # Create the semester record
+            Semester.objects.create(
+                type=semester_type,
+                year=year,
+                fees_per_credit_hour=fees_per_credit_hour
+            )
+            messages.success(request, 'Semester created successfully!')
+            return redirect('admin_dashboard')
+
         return render(request, 'admin_panel/Create_Semester.html')
 
 class TeacherView:

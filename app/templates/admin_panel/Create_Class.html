@@ -7,7 +7,7 @@
     <div class="container mx-auto max-w-lg bg-white p-6 rounded shadow">
         <h2 class="text-3xl font-semibold text-center text-slate-800 mb-4">Create Class</h2>
         <!-- Form -->
-        <form action="" method="POST">
+        <form action="{% url 'admin_create_class' %}" method="POST">
             {% csrf_token %}
 
             <!-- Course Dropdown -->
@@ -35,43 +35,48 @@
                     {% endfor %}
                 </select>
             </div>
-            <!-- Time slot Dropdown -->
+
+            <!-- Time Slot Dropdown -->
             <div class="mb-4">
-                <label class="block text-slate-700 font-medium mb-2" for="teacher">Time Slot</label>
-                <select id="teacher" name="teacher"
+                <label class="block text-slate-700 font-medium mb-2" for="time-slot">Time Slot</label>
+                <select id="time-slot" name="time_slot"
                     class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-slate-600"
                     required>
                     <option value="" disabled selected>Select Time Slot</option>
-                    {% for teacher in teachers %}
-                    <option value="{{ teacher.id }}">{{ teacher.name }}</option>
-                    {% endfor %}
+                    <option value="08:00 AM - 11:00 AM">08:00 AM - 11:00 AM</option>
+                    <option value="12:00 PM - 03:00 PM">12:00 PM - 03:00 PM</option>
+                    <option value="03:00 PM - 06:00 PM">03:00 PM - 06:00 PM</option>
                 </select>
             </div>
 
-            <!-- day Dropdown -->
+            <!-- Day of the Week Dropdown -->
             <div class="mb-4">
-                <label class="block text-slate-700 font-medium mb-2" for="teacher">Day of the Week</label>
-                <select id="teacher" name="teacher"
+                <label class="block text-slate-700 font-medium mb-2" for="day">Day of the Week</label>
+                <select id="day" name="day"
                     class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-slate-600"
                     required>
                     <option value="" disabled selected>Select Day</option>
-                    {% for teacher in teachers %}
-                    <option value="{{ teacher.id }}">{{ teacher.name }}</option>
-                    {% endfor %}
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                    <option value="Sunday">Sunday</option>
                 </select>
             </div>
 
-            <!-- Room Dropdown -->
+            <!-- Room -->
             <div class="mb-4">
-                <label class="block text-slate-700 font-medium mb-2" for="teacher">Room</label>
-                <select id="teacher" name="teacher"
-                    class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-slate-600"
-                    required>
-                    <option value="" disabled selected>Select Room</option>
-                    {% for teacher in teachers %}
-                    <option value="{{ teacher.id }}">{{ teacher.name }}</option>
-                    {% endfor %}
-                </select>
+                <label class="block text-slate-700 font-medium mb-2" for="room">Room</label>
+                <input 
+                  type="text" 
+                  id="room" 
+                  name="room" 
+                  placeholder="e.g., 11B" 
+                  class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-slate-600"
+                  required
+                />
             </div>
 
             <!-- Semester Dropdown -->
@@ -82,8 +87,10 @@
                     required>
                     <option value="" disabled selected>Select Semester</option>
                     {% for semester in semesters %}
-                    <option value="{{ semester.id }}">{{ semester.name }}</option>
-                    {% endfor %}
+        <option value="{{ semester.id }}">
+            {{ semester.type }}, {{ semester.year }}
+        </option>
+        {% endfor %}
                 </select>
             </div>
 

@@ -31,3 +31,32 @@ class Instructor(models.Model):
 
     def __str__(self):
         return self.name        
+
+
+class Semester(models.Model):
+    type = models.CharField(max_length=50)
+    year = models.PositiveIntegerField()
+    fees_per_credit_hour = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.type} {self.year}"
+    
+
+class Course(models.Model):
+    name = models.CharField(max_length=255)
+    detail = models.TextField()
+    credit_hr = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.name
+
+class Class(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
+    room_name = models.CharField(max_length=50)
+    day_of_week = models.CharField(max_length=20)
+    time_slot = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"{self.course.name} - {self.semester.type} {self.semester.year} - {self.instructor.name}"
