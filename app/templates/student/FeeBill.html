@@ -1,0 +1,41 @@
+{% extends "student/base.html" %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-100 p-6">
+    <div class="container mx-auto max-w-4xl bg-white p-8 px-16 rounded shadow">
+        <h2 class="text-3xl font-semibold text-center text-slate-800 mb-6">Student Fee Bill</h2>
+        
+        
+        <div class="student-info">
+            <h2 class="text-3xl font-bold text-slate-800"> {{ student_info.name }}</h2>
+            <h3 class="text-xl font-semibold text-slate-600">C/O {{ student_info.father_name }}</h3>
+            <p class="text-lg text-slate-500">{{ student_info.email }}</p>
+        </div><br>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full table-auto bg-white border border-slate-200 rounded">
+                <thead>
+                    <tr class="bg-slate-800 text-white">
+                        <th class="px-4 py-2 text-left">Class ID</th>
+                        <th class="px-4 py-2 text-right">Course</th>
+                        <th class="px-4 py-2 text-right">Course Fees</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in fee_data %}
+                        <tr class="border-t border-slate-200">
+                            <td class="px-4 py-2 text-slate-700">{{ item.class_id }}</td>
+                            <td class="px-4 py-2 text-right text-slate-700">{{ item.course_name }}</td>
+                            <td class="px-4 py-2 text-right text-slate-700">{{ item.fees }}/-</td>
+                        </tr>
+                    {% endfor %}
+                    <tr class="border-t border-slate-200">
+                        <td colspan="2" class="px-4 py-2 text-right text-slate-700"><b>Total Fees</b></td>
+                        <td class="px-4 py-2 text-right text-slate-700">{{ total_fees }}/-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

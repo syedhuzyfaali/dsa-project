@@ -106,6 +106,49 @@ class StudentView:
             })
         
         return render(request, 'student/Student Class Schedule.html', {'schedule': schedule})
+    
+    def view_fee_bill(request):
+        user_id = request.session.get('user_id')
+
+        if not user_id:
+            return redirect('login')
+
+        # Get the student's details
+        student = Student.objects.filter(id=user_id).first()
+
+        if not student:
+            messages.error(request, "Student not found!")
+            return redirect('login')
+
+        # Get the student's enrolled classes and calculate total fees
+        enrollments = Enrollment.objects.filter(student_id=user_id)
+        total_fees = sum(
+            enrollment.course_class.course.credit_hr * enrollment.course_class.semester.fees_per_credit_hour
+            for enrollment in enrollments
+        )
+
+        # Pass semesters and enrollment data to the template
+        semesters = Semester.objects.all()
+        fee_data = [
+            {
+                "class_id": enrollment.course_class.id,
+                "course_name": enrollment.course_class.course.name,
+                "fees": enrollment.course_class.course.credit_hr * enrollment.course_class.semester.fees_per_credit_hour,
+            }
+            for enrollment in enrollments
+        ]
+
+        return render(request, 'student/FeeBill.html', {
+            "semesters": semesters,
+            "fee_data": fee_data,
+            "total_fees": total_fees,
+            "student_info": {
+                "name": student.full_name,
+                "father_name": student.father_name,
+                "email": student.email,
+            }
+        })
+
 
 class AdminView:
     def dashboard(request):

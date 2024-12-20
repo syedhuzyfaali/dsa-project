@@ -16,6 +16,7 @@ student_urls = [
     path('student/view_test_results', StudentView.view_test_results, name='student_view_test_results'),
     path('student/view_class_schedule', StudentView.view_class_schedule, name='student_view_class_schedule'),
     path('student/view_grade_history', StudentView.view_grade_history, name='student_view_grade_history'),
+    path('student/view_Fee_bill', StudentView.view_fee_bill, name='student_view_Fee_bill'),
 ]
 
 teacher_urls = [
