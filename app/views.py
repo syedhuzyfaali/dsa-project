@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Admin,Student,Instructor
+from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
 def hero(request):
@@ -14,7 +15,7 @@ def login(request):
         admin = Admin.objects.filter(email=email).first()
         if admin and admin.password == password:
             request.session['user_type'] = 'admin'
-            request.session['user_id'] = admin.id
+            request.session['admin_id'] = admin.id
             request.session['user_name'] = admin.full_name
             messages.success(request, 'Admin logged in successfully!')
             return redirect('admin_dashboard')
@@ -62,7 +63,11 @@ class StudentView:
         return render(request, 'student/Dashboard.html')
 
     def profile(request):
-        return render(request, 'student/Profile.html')
+
+        user_id = request.session.get('user_id')
+        student = Student.objects.get(id=user_id)
+        
+        return render(request, 'student/Profile.html', {'student': student})
     
     def courses(request):
         return render(request, 'Courses.html')
@@ -82,7 +87,12 @@ class AdminView:
         return render(request, 'admin_panel/Dashboard.html')
 
     def profile(request):
-        return render(request, 'admin_panel/Profile.html')
+        admin_id = request.session.get('admin_id')
+        if not admin_id:
+            return redirect('login')  # Redirect if admin_id is not available
+
+        admin = get_object_or_404(Admin, id=admin_id)
+        return render(request, 'admin_panel/Profile.html', {'admin': admin})
     
     def courses(request):
         return render(request, 'Courses.html')
@@ -188,10 +198,20 @@ class AdminView:
 
 class TeacherView:
     def dashboard(request):
-        return render(request, 'teacher/Dashboard.html')
+        user_id = request.session.get('user_id')
+        instructor = Instructor.objects.get(id=user_id)
+        return render(request, 'teacher/Dashboard.html', {'instructor': instructor})
 
-    def profile(request):
-        return render(request, 'teacher/Profile.html')
-    
+    def profile_view(request, instructor_id):
+        instructor = get_object_or_404(Instructor, id=instructor_id)
+
+        if instructor.expertise:
+            expertise_list = instructor.expertise.split(',')
+            expertise_str = ", ".join(expertise_list)
+        else:
+            expertise_str = "No expertise listed"
+
+        return render(request, 'teacher/Profile.html', {'instructor': instructor, 'expertise_str': expertise_str})
+
     def courses(request):
         return render(request, 'Courses.html')

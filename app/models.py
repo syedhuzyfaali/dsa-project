@@ -30,4 +30,4 @@ class Instructor(models.Model):
     expertise = models.TextField()  # Store tags as comma-separated values
 
     def __str__(self):
-        return self.name
+        return self.name        

@@ -3,10 +3,9 @@
     <div class="container mx-auto flex justify-between items-center">
       <a href="#" class="text-slate-100 text-3xl font-semibold tracking-widest ml-4 hover:text-slate-400 hover:scale-125 transition-all duration-300">LMS</a>
       <div class="space-x-4">
-        <a href="#" class="text-white hover:text-slate-300">Home</a>
-        <a href="#" class="text-white hover:text-slate-300">Dashboard</a>
-        <a href="#" class="text-white hover:text-slate-300">Profile</a>
-        <a href="#" class="text-white hover:text-slate-300">Courses</a>
+        <a href="{% url 'teacher_dashboard' %}" class="text-white hover:text-slate-300">Dashboard</a>
+        <a href="{% url 'teacher_profile' instructor_id=instructor.id %}" class="text-white hover:text-slate-300">Profile</a>
+
       </div>
       <div>
         <a href="/logout" class="bg-white text-slate-800 px-4 py-2 rounded hover:bg-slate-700 hover:text-white">Logout</a>
